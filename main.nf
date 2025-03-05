@@ -39,8 +39,8 @@ workflow {
     
     // Correctly combine the BAM file and contigs file as a tuple for MetaBinner
     metabinner = MetaBinner(samtoolsOutput, assembly)
-    protein_annotation = prokka(metabinner[0], assembly)
-    // dastool = dastool(metabinner[0], assembly, metabinner[7], metabinner[8])
+    protein_annotation = prokka(metabinner[0], assembly, metabinner[5], metabinner[4])
+    // dastool = dastool(metabinner[0], assembly, metabinner[4], metabinner[3])
     quast = quast(metabinner[0], metabinner[5], metabinner[4])
     // gtdbtk_classification = gtdbtk(metabinner[4], metabinner[3])
 }
