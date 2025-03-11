@@ -1,22 +1,28 @@
 process KOfamscan {
-    tag "KOFamScan on $sample_id metagenomes (translated)"
+    tag "KOfamscan on $sample_id metagenomes (translated)"
     publishDir "${params.outdir}/${sample_id}/kofamscan", mode: 'copy'
 
-    container "/home/luiszuniga/work/containers/KOfamscan.sif"
+    container "/home/luiszuniga/work/containers/KOfamscan_v1.3.0.sif"
 
     input:
     val(sample_id)
-    file(prokka_metabat_annotation)
     file(prokka_concoct_annotation)
+    file(prokka_metabat_annotation)
 
     output:
-    file("prokka_bin_annotation")
-
-    script:
-    """
-    mkdir prokka_annotation
+    file("kofamscan_concoct_annotation")
+    file("kofamscan_metabat_annotation") 
     
-    prokka --outdir prokka_bin_annotation --prefix ${sample_id} ${contigs}/contigs.fasta
+    script:
+
+    """
+    mkdir kofamscan_concoct_annotation
+    mkdir kofamscan_metabat_annotation
+
+
+    find prokka_concoct_annotation -type f -name "*.faa" | parallel -j 4 'exec_annotation -o kofamscan_concoct_annotation/{/.}.out -p /kofamscan/db/profiles/ncycle.hal {}'
+    find prokka_metabat_annotation -type f -name "*.faa" | parallel -j 4 'exec_annotation -o kofamscan_metabat_annotation/{/.}.out -p /kofamscan/db/profiles/ncycle.hal {}'
+
 
     """
 }

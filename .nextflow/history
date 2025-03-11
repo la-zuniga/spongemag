@@ -278,3 +278,18 @@
 2025-03-06 09:18:38	1m 52s	fervent_goldwasser	OK	58aa58d1172915e745caf0467f0e7881	84036186-0c92-4960-a510-a46c4baf364b	nextflow run main.nf -resume
 2025-03-06 10:08:55	1.6s	happy_keller	ERR	58aa58d1172915e745caf0467f0e7881	84036186-0c92-4960-a510-a46c4baf364b	nextflow run main.nf -resume
 2025-03-06 10:11:48	1m 54s	fervent_feynman	OK	58aa58d1172915e745caf0467f0e7881	84036186-0c92-4960-a510-a46c4baf364b	nextflow run main.nf -resume
+2025-03-10 09:37:40	4m 31s	jovial_newton	ERR	58aa58d1172915e745caf0467f0e7881	5ba73e3c-cbac-4c95-82f5-ed537b05f253	nextflow run main.nf
+2025-03-10 09:44:15	1m 48s	chaotic_kay	ERR	58aa58d1172915e745caf0467f0e7881	5ba73e3c-cbac-4c95-82f5-ed537b05f253	nextflow run main.nf -resume
+2025-03-10 10:15:11	4m 29s	amazing_lalande	ERR	58aa58d1172915e745caf0467f0e7881	11e1b144-8682-46dc-ad43-6f7435e5f5a1	nextflow run main.nf
+2025-03-10 10:22:55	1m 48s	ecstatic_archimedes	OK	58aa58d1172915e745caf0467f0e7881	11e1b144-8682-46dc-ad43-6f7435e5f5a1	nextflow run main.nf -resume
+2025-03-10 10:28:37	4m 31s	agitated_sammet	OK	58aa58d1172915e745caf0467f0e7881	29b44d95-827b-450f-962d-9014f9069f5d	nextflow run main.nf
+2025-03-11 09:28:09	1m 45s	hopeful_tesla	OK	58aa58d1172915e745caf0467f0e7881	29b44d95-827b-450f-962d-9014f9069f5d	nextflow run main.nf -resume
+2025-03-11 09:33:09	1.8s	crazy_miescher	OK	58aa58d1172915e745caf0467f0e7881	29b44d95-827b-450f-962d-9014f9069f5d	nextflow run main.nf -resume
+2025-03-11 09:34:03	4m 30s	hungry_mcnulty	OK	58aa58d1172915e745caf0467f0e7881	fa2c63d0-4425-4fbd-bc3a-482f60551eff	nextflow run main.nf
+2025-03-11 14:38:31	-	modest_sanger	-	361d8ddd17b660a3978f059c4910cc1c	fa2c63d0-4425-4fbd-bc3a-482f60551eff	nextflow run main.nf -resume
+2025-03-11 14:39:25	-	boring_boltzmann	-	5b303674447f2890e203956aaaa06aa0	fa2c63d0-4425-4fbd-bc3a-482f60551eff	nextflow run main.nf -resume
+2025-03-11 14:41:20	-	pensive_wright	-	989135579211042bf4b07fa0375389e3	fa2c63d0-4425-4fbd-bc3a-482f60551eff	nextflow run main.nf -resume
+2025-03-11 14:42:31	-	gigantic_sammet	-	22a5aafbda185f6514ad1f8cd86938ff	fa2c63d0-4425-4fbd-bc3a-482f60551eff	nextflow run main.nf -resume
+2025-03-11 14:43:34	-	extravagant_shaw	-	d91a0330f6934d2046d2c86918ad0a52	fa2c63d0-4425-4fbd-bc3a-482f60551eff	nextflow run main.nf -resume
+2025-03-11 14:44:19	2s	hopeful_payne	ERR	5872447cf7355e705fcbd6994df4e8d6	fa2c63d0-4425-4fbd-bc3a-482f60551eff	nextflow run main.nf -resume
+2025-03-11 14:45:29	1.8s	festering_bell	OK	5872447cf7355e705fcbd6994df4e8d6	fa2c63d0-4425-4fbd-bc3a-482f60551eff	nextflow run main.nf -resume

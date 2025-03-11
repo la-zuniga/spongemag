@@ -17,6 +17,7 @@ include { samtools } from './processes/samtools.nf'
 include { MetaBinner } from './processes/binning.nf'
 include { prokka } from './processes/prokka.nf'
 // include { dastool } from './processes/dastool.nf'
+include { KOfamscan } from './processes/kofamscan.nf'
 include { quast } from './processes/quast.nf'
 
 // Channel for read pairs
@@ -40,6 +41,7 @@ workflow {
     // Correctly combine the BAM file and contigs file as a tuple for MetaBinner
     metabinner = MetaBinner(samtoolsOutput, assembly)
     protein_annotation = prokka(metabinner[0], assembly, metabinner[5], metabinner[4])
+    kofam_annotation = KOfamscan(metabinner[0], protein_annotation[1], protein_annotation[2])
     // dastool = dastool(metabinner[0], assembly, metabinner[4], metabinner[3])
     quast = quast(metabinner[0], metabinner[5], metabinner[4])
     // gtdbtk_classification = gtdbtk(metabinner[4], metabinner[3])

@@ -37,10 +37,7 @@ process prokka {
     # Annotate CONCOCT bins in parallel
     ls ${concoct_out}/fasta_bins/*.fa | parallel -j 4 'prokka --outdir prokka_concoct_annotation/{/.} --prefix {/.} {}'
 
-    .//home/luiszuniga/self/MAG/bin/rename_bins.sh
-
-
-
+    /home/luiszuniga/self/MAG/bin/./rename_bins.sh
 
     """
 }

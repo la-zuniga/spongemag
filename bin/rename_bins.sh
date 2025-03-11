@@ -1,17 +1,21 @@
 #!/bin/bash
 
-# Define the annotation directories
-for tool in concoct metabat; do
-  annotation_dir="prokka_${tool}_annotation"
+# Define the directories
+for tool in prokka_concoct_annotation prokka_metabat_annotation; do
+  if [ -d "$tool" ]; then
+    # Extract the binning tool name (remove 'prokka_' and '_annotation')
+    binning_tool="${tool#prokka_}"
+    binning_tool="${binning_tool%_annotation}"
 
-  # Loop through each genome folder
-  for genome in "$annotation_dir"/*/; do
-    genome_name=$(basename "$genome")
-
-    # Loop through each Prokka output file and rename it
-    for file in "$genome"PROKKA_*; do
-      ext="${file##*.}"
-      mv "$file" "$genome/${genome_name}_${tool}.${ext}"
+    for folder in "$tool"/*; do
+      if [ -d "$folder" ]; then
+        bin_id=$(basename "$folder") # Extract genome number
+        for file in "$folder"/*; do
+          ext="${file##*.}"                           # Extract file extension
+          new_name="${bin_id}_${binning_tool}.${ext}" # Format: <genome_number>_<binning_tool>.<ext>
+          mv "$file" "$folder/$new_name"
+        done
+      fi
     done
-  done
+  fi
 done
