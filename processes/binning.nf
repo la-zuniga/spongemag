@@ -70,7 +70,7 @@ process MetaBinner {
     singularity exec /home/luiszuniga/work/containers/checkm2_v1.0.2.sif checkm2 predict -x .fa --threads 16 --input concoct_out/fasta_bins --output-directory checkm2_out/concoct_bins --database_path /db/uniref100.KO.1.dmnd
     singularity exec /home/luiszuniga/work/containers/checkm2_v1.0.2.sif checkm2 predict -x .fa --threads 16 --input metabat_out/ --output-directory checkm2_out/metabat_bins --database_path /db/uniref100.KO.1.dmnd
     # making the contig bin file
-    
+
     singularity exec /home/luiszuniga/work/containers/concoct_v1.1.0.sif sed 's/,/\t/g' concoct_out/clustering_merged.csv | tail -n +2 | awk -F'\t' '{print \$1 "\t" \$2 "_concoct"}' > ${sample_id}_concoct_contig_bin.tsv
 
     """

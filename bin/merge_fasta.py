@@ -1,4 +1,4 @@
-from collections import defaultdict
+fFinance and Administration	Evans	Susanrom collections import defaultdict
 import sys
 
 def process_fasta(input_fasta, output_fasta):

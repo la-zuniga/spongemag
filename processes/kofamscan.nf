@@ -11,8 +11,8 @@ process KOfamscan {
 
     output:
     file("kofamscan_concoct_annotation")
-    file("kofamscan_metabat_annotation") 
-    
+    file("kofamscan_metabat_annotation")
+
     script:
 
     """
@@ -20,8 +20,8 @@ process KOfamscan {
     mkdir kofamscan_metabat_annotation
 
 
-    find prokka_concoct_annotation -type f -name "*.faa" | parallel -j 4 'exec_annotation -o kofamscan_concoct_annotation/{/.}.out -p /kofamscan/db/profiles/ncycle.hal {}'
-    find prokka_metabat_annotation -type f -name "*.faa" | parallel -j 4 'exec_annotation -o kofamscan_metabat_annotation/{/.}.out -p /kofamscan/db/profiles/ncycle.hal {}'
+    find ${prokka_concoct_annotation}/ -type f -name "*.faa" | parallel -j 4 'exec_annotation -o kofamscan_concoct_annotation/{/.}.out -p /kofamscan/db/profiles/ncycle.hal {}'
+    find ${prokka_metabat_annotation}/ -type f -name "*.faa" | parallel -j 4 'exec_annotation -o kofamscan_metabat_annotation/{/.}.out -p /kofamscan/db/profiles/ncycle.hal {}'
 
 
     """
