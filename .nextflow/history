@@ -301,3 +301,8 @@
 2025-03-20 13:32:46	-	chaotic_mercator	-	5872447cf7355e705fcbd6994df4e8d6	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume
 2025-03-31 09:46:06	-	gigantic_brenner	-	5872447cf7355e705fcbd6994df4e8d6	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume
 2025-04-03 10:22:13	-	spontaneous_joliot	-	5872447cf7355e705fcbd6994df4e8d6	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume
+2025-04-03 10:34:02	2m 4s	astonishing_mcnulty	ERR	4121ec4fbb8dd2afbc219ae622b3a533	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume
+2025-04-03 11:12:29	2.6s	shrivelled_lalande	ERR	4121ec4fbb8dd2afbc219ae622b3a533	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume
+2025-04-03 11:13:00	16.5s	awesome_hopper	OK	4121ec4fbb8dd2afbc219ae622b3a533	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume
+2025-04-03 11:49:30	-	berserk_neumann	-	b7e4210483869f2be03eecf15f667347	e136b4b8-475d-4728-92e5-37412050183a	nextflow run main.nf
+2025-04-03 11:52:19	4m 46s	golden_cray	OK	6b059418d8abcb2df4863d6a11a3c76b	846e6e5a-effa-4ace-bd2e-ad614ac0c1fb	nextflow run main.nf

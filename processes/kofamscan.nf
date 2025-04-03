@@ -18,7 +18,7 @@ process KOfamscan {
     """
     mkdir kofamscan_concoct_annotation
     mkdir kofamscan_metabat_annotation
-
+    mkdir tmp
 
     find ${prokka_concoct_annotation}/ -type f -name "*.faa" | parallel -j 4 'exec_annotation -o kofamscan_concoct_annotation/{/.}.out -p /kofamscan/db/profiles/ncycle.hal {}'
     find ${prokka_metabat_annotation}/ -type f -name "*.faa" | parallel -j 4 'exec_annotation -o kofamscan_metabat_annotation/{/.}.out -p /kofamscan/db/profiles/ncycle.hal {}'
