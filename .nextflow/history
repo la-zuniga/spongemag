@@ -295,3 +295,9 @@
 2025-03-11 14:45:29	1.8s	festering_bell	OK	5872447cf7355e705fcbd6994df4e8d6	fa2c63d0-4425-4fbd-bc3a-482f60551eff	nextflow run main.nf -resume
 2025-03-13 08:27:47	2.5s	insane_lumiere	OK	5872447cf7355e705fcbd6994df4e8d6	fa2c63d0-4425-4fbd-bc3a-482f60551eff	nextflow run main.nf -resume
 2025-03-13 08:37:46	16.1s	sick_easley	ERR	5872447cf7355e705fcbd6994df4e8d6	fa2c63d0-4425-4fbd-bc3a-482f60551eff	nextflow run main.nf -resume
+2025-03-17 13:56:46	2m 44s	festering_swanson	ERR	5872447cf7355e705fcbd6994df4e8d6	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf
+2025-03-17 14:00:30	3m 52s	amazing_cori	ERR	5872447cf7355e705fcbd6994df4e8d6	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume
+2025-03-20 13:32:00	-	maniac_yonath	-	5872447cf7355e705fcbd6994df4e8d6	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume
+2025-03-20 13:32:46	-	chaotic_mercator	-	5872447cf7355e705fcbd6994df4e8d6	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume
+2025-03-31 09:46:06	-	gigantic_brenner	-	5872447cf7355e705fcbd6994df4e8d6	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume
+2025-04-03 10:22:13	-	spontaneous_joliot	-	5872447cf7355e705fcbd6994df4e8d6	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume

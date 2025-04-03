@@ -9,6 +9,7 @@ process prokka {
     file(contigs)
     file(metabat_out)
     file(concoct_out)
+    file(checkm2_out)
 
     output:
     file("prokka_assembly_annotation")
@@ -19,6 +20,11 @@ process prokka {
 
     """
 
+    awk '{ print \$1 }' ${checkm2_out}/concoct_bins/concoct_sorted_quality_report.tsv >> concoct_bin_list.txt
+    sed -i "1d" concoct_bin_list.txt
+    awk '{ print \$1 }' ${checkm2_out}/metabat_bins/metabat_sorted_quality_report.tsv >> metabat_bin_list.txt
+    sed -i "1d" metabat_bin_list.txt
+    
     mkdir -p prokka_assembly_annotation
     mkdir -p prokka_metabat_annotation
     mkdir -p prokka_concoct_annotation
