@@ -18,13 +18,14 @@ include { megahit }     from './processes/megahit.nf'
 include { spades }      from './processes/spades.nf'
 include { minimap2 }    from './processes/minimap2.nf'
 include { samtools }    from './processes/samtools.nf'
-include { MetaBinner }  from './processes/binning.nf'
+include { Binning }  from './processes/binning.nf'
 include { prokka }      from './processes/prokka.nf'
 include { KOfamscan }   from './processes/kofamscan.nf'
 include { quast }       from './processes/quast.nf'
 // include { dastool }  from './processes/dastool.nf'
 // include { gtdbtk }   from './processes/gtdbtk.nf'
-
+// I'm working on trying to immplement DAStool to get more robust consensus bins, but haven't worked it out yet, so it's commented out.
+// the gtdbtk-container I've built is quite large, but I know it works, so I comment it out when testing main.nf
 // =============================
 // Input Channels
 // =============================
@@ -52,18 +53,18 @@ workflow {
     // Step 3: Mapping & Binning
     minimap2Output    = minimap2(fastpOutput[0], assembly)
     samtoolsOutput    = samtools(minimap2Output)
-    metabinnerOutput  = MetaBinner(samtoolsOutput, assembly)
+    binningOutput  = Binning(samtoolsOutput, assembly)
 
     // Step 4: Annotation
-    protein_annotation = prokka(metabinnerOutput[0], assembly, metabinnerOutput[5], metabinnerOutput[4], metabinnerOutput[6])
-    kofam_annotation   = KOfamscan(metabinnerOutput[0], protein_annotation[1], protein_annotation[2])
+    protein_annotation = prokka(binningOutput[0], assembly, binningOutput[5], binningOutput[4], binningOutput[6])
+    kofam_annotation   = KOfamscan(binningOutput[0], protein_annotation[1], protein_annotation[2])
 
     // Step 5: Quality Control & Reporting
-    quastReport = quast(metabinnerOutput[0], metabinnerOutput[5], metabinnerOutput[4])
+    quastReport = quast(binningOutput[0], binningOutput[5], binningOutput[4])
 
     // Optional steps (commented out)
-    // dastoolOutput = dastool(metabinnerOutput[0], assembly, metabinnerOutput[4], metabinnerOutput[3])
-    // gtdbtk_classification = gtdbtk(metabinnerOutput[4], metabinnerOutput[3])
+    // dastoolOutput = dastool(binningOutput[0], assembly, binningOutput[4], binningOutput[3])
+    // gtdbtk_classification = gtdbtk(binningOutput[4], binningOutput[3])
 }
 
 

@@ -1,6 +1,6 @@
 // processes/binning.nf
-process MetaBinner {
-    tag "MetaBinner on $sample_id"
+process Binning {
+    tag "Binning $sample_id"
     publishDir "${params.outdir}/${sample_id}/binning", mode: 'copy'
 
     input:
