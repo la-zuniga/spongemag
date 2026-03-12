@@ -34,7 +34,7 @@ process prokka {
                ${dastool_bins}/\${bin}.fa
     done < bin_list.txt
 
-    /home/luiszuniga/self/MAG/bin/./rename_bins.sh
+    rename_bins.sh
 
     """
 }

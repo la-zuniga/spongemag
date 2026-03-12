@@ -26,6 +26,7 @@ include { prokka }      from './processes/prokka.nf'
 include { KOfamscan }   from './processes/kofamscan.nf'
 include { quast }       from './processes/quast.nf'
 include { dastool }  from './processes/dastool.nf'
+include { kegg_pathway } from './processes/kegg_pathway.nf'
 // include { gtdbtk }   from './processes/gtdbtk.nf'
 // I'm working on trying to immplement DAStool to get more robust consensus bins, but haven't worked it out yet, so it's commented out.
 // the gtdbtk-container I've built is quite large, but I know it works, so I comment it out when testing main.nf
@@ -95,6 +96,11 @@ workflow {
 
     // Step 5: Assembly QC on refined bins
     quastReport = quast(dastoolOutput[0], dastoolOutput[2])
+
+    kegg_results = kegg_pathway(
+    dastoolOutput[0],
+    kofam_annotation[1]    // kofamscan_filtered.tsv
+    )
 
     // Optional
     // gtdbtk_classification = gtdbtk(dastoolOutput[2])}

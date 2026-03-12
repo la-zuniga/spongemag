@@ -6,7 +6,7 @@ process dastool {
 
     input:
     val(sample_id)
-    file(contigs)
+    path(contigs)
     path(concoct_contig_bin)
     path(metabat_contig_bin)
     path(metabinner_contig_bin)
@@ -21,7 +21,7 @@ process dastool {
     mod_headers.py ${contigs}/contigs.fasta contigs.fasta
     
     mkdir -p DAStool_out tmp_dastool
-    DAS_Tool  -i ${concoct_contig_bin},${metabat_contig_bin} \
+    DAS_Tool  -i ${concoct_contig_bin},${metabat_contig_bin},${metabinner_contig_bin} \
     -l concoct,metabat,metabinner \
     -c contigs.fasta \
     -o DAStool_out/${sample_id} \

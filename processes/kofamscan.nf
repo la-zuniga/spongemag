@@ -10,6 +10,7 @@ process KOfamscan {
 
     output:
     path("kofamscan_bins_annotation")
+    path("kofamscan_filtered.tsv")
 
     script:
 
@@ -26,7 +27,11 @@ process KOfamscan {
                 -o kofamscan_bins_annotation/{/.}.out \
                 -p /kofamscan/db/profiles/ncycle.hal \
                 --cpu 1 {}'
-
-
+  filter_kofamscan.py \
+    -i kofamscan_bins_annotation \
+    -o kofamscan_filtered.tsv \
+    --min_tier putative \
+    --evalue_cutoff 1e-5 \
+    --min_putative_score 50
     """
 }
