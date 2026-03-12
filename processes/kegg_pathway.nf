@@ -2,7 +2,7 @@ process kegg_pathway {
     tag "KEGG pathway mapping on $sample_id"
     publishDir "${params.outdir}/${sample_id}/kegg_pathways", mode: 'copy'
 
-    container "${params.containers.kofamscan}"   // reuse — just needs python + requests
+    container "${params.containers.checkm2}"   // reuse — just needs python + requests
 
     input:
     val(sample_id)

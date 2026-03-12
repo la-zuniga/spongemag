@@ -24,11 +24,15 @@ def kegg_get(endpoint, retries=3, delay=0.35):
     """
     Politely query the KEGG REST API.
     KEGG asks for no more than ~3 requests/second from a single IP.
+    SSL verification is disabled to handle HPC environments with missing CA certs.
     """
+    import urllib3
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
     url = f"{BASE_URL}/{endpoint}"
     for attempt in range(retries):
         try:
-            response = requests.get(url, timeout=15)
+            response = requests.get(url, timeout=15, verify=False)
             if response.status_code == 200:
                 time.sleep(delay)
                 return response.text
@@ -163,6 +167,15 @@ def compute_completeness(df, ko_to_pathways, pathway_names, pathway_ko_sets):
                 'confirmed_ko_ids': ','.join(sorted(confirmed_kos)),
                 'putative_ko_ids': ','.join(sorted(putative_kos)),
             })
+
+    if not records:
+        print("  Warning: no pathway-bin records found. "
+              "Check that KEGG queries succeeded and KOs map to target pathways.")
+        return pd.DataFrame(columns=[
+            'bin', 'pathway_id', 'pathway_name', 'pathway_total_kos',
+            'present_kos', 'confirmed_kos', 'putative_kos', 'completeness',
+            'present_ko_ids', 'confirmed_ko_ids', 'putative_ko_ids'
+        ])
 
     return pd.DataFrame(records).sort_values(
         ['bin', 'completeness'], ascending=[True, False]
