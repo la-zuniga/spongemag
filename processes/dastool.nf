@@ -2,26 +2,30 @@ process dastool {
     tag "DASTool on $sample_id metagenomes"
     publishDir "${params.outdir}/${sample_id}/DAStool", mode: 'copy'
 
-    container "/home/luiszuniga/work/containers/DAStool_v1.1.7.sif"
+    container "/home/luiszuniga/work/containers/dastool_1.1.7.sif"
 
     input:
     val(sample_id)
     file(contigs)
-    file("${sample_id}_concoct_contig_bin.tsv")
-    file("${sample_id}_metabat_contig_bin.tsv")
+    path(concoct_contig_bin)
+    path(metabat_contig_bin)
+    path(metabinner_contig_bin)
 
     output:
+    val(sample_id)
     file("DAStool_out")
+    path("DAStool_out/${sample_id}_DASTool_bins")
 
     script:
     """
-    python3 /home/luiszuniga/self/MAG/bin/mod_headers.py ${contigs}/contigs.fasta contigs.fasta
+    mod_headers.py ${contigs}/contigs.fasta contigs.fasta
     
-    mkdir DAStool_out
-    DAS_Tool  -i ${sample_id}_concoct_contig_bin.tsv,${sample_id}_metabat_contig_bin.tsv,\
-    -l concoct,metabat \
+    mkdir -p DAStool_out tmp_dastool
+    DAS_Tool  -i ${concoct_contig_bin},${metabat_contig_bin} \
+    -l concoct,metabat,metabinner \
     -c contigs.fasta \
-    -o ${sample_id} \
+    -o DAStool_out/${sample_id} \
+    --write_bins \
     --debug 
     """
 }

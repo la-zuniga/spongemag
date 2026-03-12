@@ -6,23 +6,16 @@ process quast {
 
     input:
     val(sample_id)
-    path(metabat_path)
-    path(concoct_path)
-
-
+    path(dastool_bins)
+    
     output:
-    file("quast_output/metabat_bins")
-    file("quast_output/concoct_bins")
+    file("quast_output")
 
     script:
     """
     # Running QUAST on the MetaBAT bins
 
-    echo "Concoct Path: ${concoct_path}"
-    echo "Metabat Path: ${metabat_path}"
-
-    quast -o quast_output/concoct_bins ${concoct_path}/fasta_bins/*.fa
     
-    quast -o quast_output/metabat_bins ${metabat_path}/*.fa
+    quast -o quast_output ${dastool_bins}/*.fa
     """
 }

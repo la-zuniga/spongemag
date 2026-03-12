@@ -13,11 +13,11 @@ process Binning {
     file("${sample_id}_coverage_table_sorted.tsv")
     file("concoct_out")
     file("metabat_out")
-    file("checkm2_out")
     file("${sample_id}_concoct_contig_bin.tsv")
     file("${sample_id}_metabat_contig_bin.tsv")
     file("${sample_id}_contigs_10K.fa")
     file("metabinner_out")
+    file("${sample_id}_metabinner_contig_bin.tsv")
 
     script:
     """
@@ -43,7 +43,7 @@ process Binning {
         -k ${sample_id}_contigs_10K_kmer_4_f1000.csv \
         -o ${sample_id}_coverage_table_sorted.tsv
 
-    mkdir -p concoct_out concoct_out/fasta_bins checkm2_out
+    mkdir -p concoct_out concoct_out/fasta_bins
 
     # Run CONCOCT
     singularity exec ${params.containers.concoct} \
@@ -92,6 +92,12 @@ process Binning {
 
     # Generate contig-to-bin TSV for MetaBAT (from bin/)
     metabat_contig2bin.py metabat_out/ ${sample_id}_metabat_contig_bin.tsv
+
+    # Generate contig-to-bin TSV for MetaBinner (from bin/)
+    METABINNER_BINS=metabinner_out/metabinner_res/unitem_profile/kmeans_length_weight_*_t_logtrans_result.tsv_bins
+    metabinner_contig2bin.py \
+    \${METABINNER_BINS} \
+    ${sample_id}_metabinner_contig_bin.tsv
 
 
     # Generate CONCOCT contig-to-bin TSV

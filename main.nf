@@ -25,7 +25,7 @@ include { checkm2 }     from './processes/checkm2.nf'
 include { prokka }      from './processes/prokka.nf'
 include { KOfamscan }   from './processes/kofamscan.nf'
 include { quast }       from './processes/quast.nf'
-// include { dastool }  from './processes/dastool.nf'
+include { dastool }  from './processes/dastool.nf'
 // include { gtdbtk }   from './processes/gtdbtk.nf'
 // I'm working on trying to immplement DAStool to get more robust consensus bins, but haven't worked it out yet, so it's commented out.
 // the gtdbtk-container I've built is quite large, but I know it works, so I comment it out when testing main.nf
@@ -34,7 +34,7 @@ include { quast }       from './processes/quast.nf'
 // =============================
 Channel.fromFilePairs(params.reads).set { read_pairs_ch }
 
-// =============================
+    // =============================
 // Workflow Definition
 // =============================
 workflow {
@@ -54,41 +54,51 @@ workflow {
     }
 
     // Step 3a: Mapping & Binning
+    // binningOutput[0]  = sample_id
+    // binningOutput[6]  = concoct_contig_bin.tsv
+    // binningOutput[7]  = metabat_contig_bin.tsv
+    // binningOutput[10] = metabinner_contig_bin.tsv
     minimap2Output = minimap2(fastpOutput[0], assembly)
     samtoolsOutput = samtools(minimap2Output)
     binningOutput  = Binning(samtoolsOutput, assembly)
 
-    // Step 3b: Bin Quality Assessment
-    // Now a separate, independently cacheable step.
-    // binningOutput[0] = sample_id
-    // binningOutput[4] = concoct_out
-    // binningOutput[5] = metabat_out
-    checkm2Output  = checkm2(binningOutput[0], binningOutput[4], binningOutput[5])
-
-    // Step 4: Annotation
-    // checkm2Output[1] = checkm2_out (replaces old binningOutput[6])
-    // binningOutput[5] = metabat_out
-    // binningOutput[4] = concoct_out
-    protein_annotation = prokka(
+    // Step 3b: Consensus Binning
+    // dastoolOutput[0] = sample_id
+    // dastoolOutput[1] = DAStool_out (full output dir)
+    // dastoolOutput[2] = DASTool_bins (refined bins dir — fed downstream)
+    dastoolOutput  = dastool(
         binningOutput[0],
         assembly,
-        binningOutput[5],
-        binningOutput[4],
+        binningOutput[6],
+        binningOutput[7],
+        binningOutput[10]
+    )
+
+    // Step 3c: Quality Assessment on refined bins only
+    // checkm2Output[0] = sample_id
+    // checkm2Output[1] = checkm2_out
+    checkm2Output  = checkm2(dastoolOutput[0], dastoolOutput[2])
+
+    // Step 4: Annotation of quality-filtered refined bins
+    // protein_annotation[0] = prokka_assembly_annotation
+    // protein_annotation[1] = prokka_bins_annotation
+    protein_annotation = prokka(
+        dastoolOutput[0],
+        assembly,
+        dastoolOutput[2],
         checkm2Output[1]
     )
     kofam_annotation = KOfamscan(
-        binningOutput[0],
-        protein_annotation[1],
-        protein_annotation[2]
+        dastoolOutput[0],
+        protein_annotation[1]
     )
 
-    // Step 5: Quality Control & Reporting
-    quastReport = quast(binningOutput[0], binningOutput[5], binningOutput[4])
+    // Step 5: Assembly QC on refined bins
+    quastReport = quast(dastoolOutput[0], dastoolOutput[2])
 
-    // Optional steps (commented out)
-    // dastoolOutput = dastool(binningOutput[0], assembly, binningOutput[4], binningOutput[3])
-    // gtdbtk_classification = gtdbtk(binningOutput[4], binningOutput[3])
-}
+    // Optional
+    // gtdbtk_classification = gtdbtk(dastoolOutput[2])}
+  }
 
 
 
