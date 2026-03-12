@@ -2,7 +2,7 @@ process KOfamscan {
     tag "KOfamscan on $sample_id metagenomes (translated)"
     publishDir "${params.outdir}/${sample_id}/kofamscan", mode: 'copy'
 
-    container "/home/luiszuniga/work/containers/KOfamscan_v1.3.0.sif"
+    container "${params.containers.kofamscan}"
 
     input:
     val(sample_id)
@@ -18,7 +18,8 @@ process KOfamscan {
     """
     mkdir kofamscan_concoct_annotation
     mkdir kofamscan_metabat_annotation
-    
+    mkdir -p tmp/tabular
+    mkdir -p tmp/mapper
     echo "Current working directory: \$(pwd)"
     echo "Listing contents of prokka_metabat_annotation:"
     ls -lh ${prokka_metabat_annotation}

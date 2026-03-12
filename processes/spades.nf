@@ -3,7 +3,7 @@ process spades {
     tag "spades on $sample_id"
     publishDir "${params.outdir}/${sample_id}/spades", mode: 'copy'
 
-    container "/home/luiszuniga/work/containers/SPAdes_v4.0.0.sif"
+    container "${params.containers.spades}"
 
     input:
     tuple val(sample_id), file(r1), file(r2)

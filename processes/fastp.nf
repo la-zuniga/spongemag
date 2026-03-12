@@ -3,7 +3,7 @@ process fastp {
     tag "fastp QC on $sample_id"
     publishDir "${params.outdir}/${sample_id}/fastp", mode: 'copy'
 
-    container "/home/luiszuniga/work/containers/staphb_fastp_v0.23.4.sif"
+    container "${params.containers.fastp}"
 
     input:
     tuple val(sample_id), file(x)

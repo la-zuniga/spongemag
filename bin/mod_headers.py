@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 
 def process_fasta(input_file, output_file):

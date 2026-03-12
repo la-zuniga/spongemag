@@ -3,7 +3,7 @@ process minimap2 {
     tag "minimap2 on $sample_id"
     publishDir "${params.outdir}/${sample_id}/minimap2", mode: 'copy'
 
-    container "/home/luiszuniga/work/containers/minimap2_v2.28-r1209.sif"
+    container "${params.containers.minimap2}"
 
     input:
     tuple val(sample_id), file(r1), file(r2)

@@ -7,6 +7,8 @@ projectDir = "/home/luiszuniga/self/MAG"
 params.input_dir = "/home/luiszuniga/self/data"
 params.reads = "$params.input_dir/*_{R1,R2}.fastq.gz"
 params.outdir = "$projectDir/out"
+containers = "$projectDir/containers"
+bin = "$projectDir/bin"
 
 // =============================
 // Include Process Modules
@@ -19,6 +21,7 @@ include { spades }      from './processes/spades.nf'
 include { minimap2 }    from './processes/minimap2.nf'
 include { samtools }    from './processes/samtools.nf'
 include { Binning }  from './processes/binning.nf'
+include { checkm2 }     from './processes/checkm2.nf'
 include { prokka }      from './processes/prokka.nf'
 include { KOfamscan }   from './processes/kofamscan.nf'
 include { quast }       from './processes/quast.nf'
@@ -37,27 +40,47 @@ Channel.fromFilePairs(params.reads).set { read_pairs_ch }
 workflow {
 
     // Step 1: Preprocessing
-    fastpOutput    = fastp(read_pairs_ch)
-    fastQCoutput   = fastqc(fastpOutput[0])
-    multiqcReport  = multiqc(fastQCoutput[0])
+    fastpOutput   = fastp(read_pairs_ch)
+    fastQCoutput  = fastqc(fastpOutput[0])
+    multiqcReport = multiqc(fastQCoutput[0])
 
     // Step 2: Assembly
     if (params.assembly == 'megahit') {
         assembly = megahit(fastpOutput[0])
     } else if (params.assembly == 'spades') {
-        assembly = spades(fastpOutput)
+        assembly = spades(fastpOutput[0])
     } else {
         error "Invalid assembler choice: ${params.assembly}"
-    } 
+    }
 
-    // Step 3: Mapping & Binning
-    minimap2Output    = minimap2(fastpOutput[0], assembly)
-    samtoolsOutput    = samtools(minimap2Output)
+    // Step 3a: Mapping & Binning
+    minimap2Output = minimap2(fastpOutput[0], assembly)
+    samtoolsOutput = samtools(minimap2Output)
     binningOutput  = Binning(samtoolsOutput, assembly)
 
+    // Step 3b: Bin Quality Assessment
+    // Now a separate, independently cacheable step.
+    // binningOutput[0] = sample_id
+    // binningOutput[4] = concoct_out
+    // binningOutput[5] = metabat_out
+    checkm2Output  = checkm2(binningOutput[0], binningOutput[4], binningOutput[5])
+
     // Step 4: Annotation
-    protein_annotation = prokka(binningOutput[0], assembly, binningOutput[5], binningOutput[4], binningOutput[6])
-    kofam_annotation   = KOfamscan(binningOutput[0], protein_annotation[1], protein_annotation[2])
+    // checkm2Output[1] = checkm2_out (replaces old binningOutput[6])
+    // binningOutput[5] = metabat_out
+    // binningOutput[4] = concoct_out
+    protein_annotation = prokka(
+        binningOutput[0],
+        assembly,
+        binningOutput[5],
+        binningOutput[4],
+        checkm2Output[1]
+    )
+    kofam_annotation = KOfamscan(
+        binningOutput[0],
+        protein_annotation[1],
+        protein_annotation[2]
+    )
 
     // Step 5: Quality Control & Reporting
     quastReport = quast(binningOutput[0], binningOutput[5], binningOutput[4])

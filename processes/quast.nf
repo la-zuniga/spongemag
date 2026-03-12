@@ -2,7 +2,7 @@ process quast {
     tag "QUAST on $sample_id metagenomes"
     publishDir "${params.outdir}/${sample_id}/quast", mode: 'copy'
 
-    container "/home/luiszuniga/work/containers/QUAST_v5.3.0.sif"
+    container "${params.containers.quast}"
 
     input:
     val(sample_id)

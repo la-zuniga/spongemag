@@ -1,4 +1,6 @@
-fFinance and Administration	Evans	Susanrom collections import defaultdict
+#!/usr/bin/env python3
+
+from collections import defaultdict
 import sys
 
 def process_fasta(input_fasta, output_fasta):

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 
 def append_suffix(input_file, suffix, output_file):

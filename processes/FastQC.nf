@@ -2,7 +2,7 @@ process fastqc {
     tag "FastQC on $sample_id"
     publishDir "${params.outdir}/${sample_id}/fastqc", mode: 'copy'
 
-    container "/home/luiszuniga/work/containers/FastQC_v0.12.1.sif"
+    container "${params.containers.fastqc}"
 
     input:
     tuple val(sample_id), file(r1), file(r2)

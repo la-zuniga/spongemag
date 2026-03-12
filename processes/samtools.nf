@@ -3,7 +3,7 @@ process samtools {
     tag "samtools on $sample_id"
     publishDir "${params.outdir}/${sample_id}/samtools", mode: 'copy'
 
-    container "/home/luiszuniga/work/containers/samtools_v1.21.sif"
+    container "${params.containers.samtools}"
 
     input:
     tuple val(sample_id), file(alignment)

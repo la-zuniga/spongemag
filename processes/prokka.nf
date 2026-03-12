@@ -2,7 +2,7 @@ process prokka {
     tag "PROKKA on $sample_id metagenomes"
     publishDir "${params.outdir}/${sample_id}/prokka", mode: 'copy'
 
-    container "/home/luiszuniga/work/containers/prokka.sif"
+    container "${params.containers.prokka}"
 
     input:
     val(sample_id)
