@@ -3,11 +3,11 @@ nextflow.enable.dsl=2
 // =============================
 // Project Directories & Params
 // =============================
-projectDir = "/home/luiszuniga/self/MAG"
-params.input_dir = "/home/luiszuniga/self/data"
+projectDir = "/home/luis/spongemag"
+params.input_dir = "/home/luis/data"
 params.reads = "$params.input_dir/*_{R1,R2}.fastq.gz"
 params.outdir = "$projectDir/out"
-containers = "$projectDir/containers"
+containers = "/home/luis/containers"
 bin = "$projectDir/bin"
 
 // =============================

@@ -2,7 +2,7 @@ process dastool {
     tag "DASTool on $sample_id metagenomes"
     publishDir "${params.outdir}/${sample_id}/DAStool", mode: 'copy'
 
-    container "/home/luiszuniga/work/containers/dastool_1.1.7.sif"
+    container "${params.containers.dastool}"
 
     input:
     val(sample_id)

@@ -14,7 +14,7 @@ def filter_quality(input_file, output_file):
         name = columns[0]
         completeness = float(columns[1])
         contamination = float(columns[2])
-        if completeness >= 95.0 and contamination < 5.0:
+        if completeness >= 90.0 and contamination < 5.0:
             filtered_lines.append(line)
 
     with open(output_file, 'w') as outfile:
