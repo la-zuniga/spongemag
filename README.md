@@ -6,7 +6,7 @@ A [Nextflow](https://www.nextflow.io/) pipeline for recovering metagenome-assemb
 
 spongeMAG takes paired-end shotgun metagenomic reads and carries them through quality control, assembly, binning, and functional annotation. It was inspired by the pipeline I developed during my master's thesis, which used metagenomics to profile nitrogen cycling potential in microbial symbionts associated with marine sponges.
 
-The part I find most interesting is the annotation of genes using **KOfamScan**, which assigns KEGG orthologs (KOs) to proteins predicted from the recovered MAGs. These annotations can be used to infer the functional potential of a genome. The current version specifically targets KOs involved in nitrogen cycle reactions — the proteins that mediate the movement of nitrogen between biotic and abiotic compartments — but it can be adapted to search for any KOs of interest.
+The part I find most interesting is the annotation of genes using **KOfamScan**, which assigns KEGG orthologs (KOs) to proteins predicted from the recovered MAGs. These annotations can be used to infer the functional potential of a genome. The current version specifically targets KOs involved in nitrogen cycle reactions but it can be adapted to search for any KOs of interest.
 
 ## Pipeline steps
 
