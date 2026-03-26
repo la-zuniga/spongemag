@@ -36,4 +36,4 @@ Input reads are expected as paired-end FASTQ files matching the pattern `*_{R1,R
 
 ## Project status
 
-This is an active work in progress — still rough around the edges, but I'm iterating on it steadily. I'm making it public because I think it's fun, even in its unpolished state. Contributions, feedback, and suggestions are welcome.
+This is an active work in progress but I'm iterating on it steadily. I'm making it public because I think it's fun, even in its unpolished state. Contributions, feedback, and suggestions are welcome.
