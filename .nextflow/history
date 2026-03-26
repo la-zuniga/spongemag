@@ -306,3 +306,48 @@
 2025-04-03 11:13:00	16.5s	awesome_hopper	OK	4121ec4fbb8dd2afbc219ae622b3a533	9e11937f-681d-4bd3-8100-46e77bd63936	nextflow run main.nf -resume
 2025-04-03 11:49:30	-	berserk_neumann	-	b7e4210483869f2be03eecf15f667347	e136b4b8-475d-4728-92e5-37412050183a	nextflow run main.nf
 2025-04-03 11:52:19	4m 46s	golden_cray	OK	6b059418d8abcb2df4863d6a11a3c76b	846e6e5a-effa-4ace-bd2e-ad614ac0c1fb	nextflow run main.nf
+2026-03-12 22:37:16	7m 54s	elated_lavoisier	ERR	8ee3a3e4789f2fc9ea8583265d3fdf32	39f9ac56-ce9e-4619-9ff2-cc62f41dc0be	nextflow run main.nf
+2026-03-12 22:50:08	13m 8s	trusting_noyce	OK	8ee3a3e4789f2fc9ea8583265d3fdf32	39f9ac56-ce9e-4619-9ff2-cc62f41dc0be	nextflow run main.nf -resume
+2026-03-12 23:14:43	5.6s	desperate_jennings	ERR	8ee3a3e4789f2fc9ea8583265d3fdf32	39f9ac56-ce9e-4619-9ff2-cc62f41dc0be	nextflow run main.nf -resume
+2026-03-12 23:15:15	16.9s	festering_linnaeus	OK	8ee3a3e4789f2fc9ea8583265d3fdf32	39f9ac56-ce9e-4619-9ff2-cc62f41dc0be	nextflow run main.nf -resume
+2026-03-12 23:19:36	16.8s	infallible_goldwasser	OK	8ee3a3e4789f2fc9ea8583265d3fdf32	39f9ac56-ce9e-4619-9ff2-cc62f41dc0be	nextflow run main.nf -resume
+2026-03-12 23:35:34	7.7s	loving_booth	ERR	8ee3a3e4789f2fc9ea8583265d3fdf32	39f9ac56-ce9e-4619-9ff2-cc62f41dc0be	nextflow run main.nf -resume
+2026-03-12 23:40:18	16.3s	hopeful_cray	OK	8ee3a3e4789f2fc9ea8583265d3fdf32	39f9ac56-ce9e-4619-9ff2-cc62f41dc0be	nextflow run main.nf -resume
+2026-03-12 23:42:04	6.1s	nauseous_shaw	OK	8ee3a3e4789f2fc9ea8583265d3fdf32	39f9ac56-ce9e-4619-9ff2-cc62f41dc0be	nextflow run main.nf -resume
+2026-03-17 18:39:40	-	dreamy_tesla	-	0ee47144f490d63303ba5b4ecd4fc856	89b832c1-a29f-47ee-82a0-01f7260d7e85	nextflow run main.nf
+2026-03-17 19:01:49	21m 59s	nasty_goodall	OK	0ee47144f490d63303ba5b4ecd4fc856	46b0385e-0036-4225-819c-489dfea90172	nextflow run main.nf
+2026-03-23 18:21:15	3m 40s	irreverent_varahamihira	ERR	2dec1bc331ec079339c51deb2955cda2	145d2b2d-f650-443a-9b51-7408c796fb58	nextflow run main.nf
+2026-03-23 18:47:38	5.3s	compassionate_joliot	ERR	2dec1bc331ec079339c51deb2955cda2	983c6806-33b6-4778-beef-97c055ae91ba	nextflow run main.nf --outdir /mnt/spongemag_test -w /mnt/spongemag_test/work
+2026-03-23 19:14:08	5.6s	backstabbing_golick	ERR	2dec1bc331ec079339c51deb2955cda2	3b1d167e-5101-44d9-90f6-397133626e8f	nextflow run main.nf --outdir /mnt/spongemag_test -w /mnt/spongemag_test/work
+2026-03-23 19:16:02	3m 41s	ecstatic_solvay	ERR	2dec1bc331ec079339c51deb2955cda2	3b1d167e-5101-44d9-90f6-397133626e8f	nextflow run main.nf --outdir /mnt/spongemag_test -w /mnt/spongemag_test/work -resume
+2026-03-23 19:25:07	9m 56s	amazing_cantor	ERR	2dec1bc331ec079339c51deb2955cda2	3b1d167e-5101-44d9-90f6-397133626e8f	nextflow run main.nf --outdir /mnt/spongemag_test -w /mnt/spongemag_test/work -resume
+2026-03-23 19:47:10	22.5s	spontaneous_cray	ERR	2dec1bc331ec079339c51deb2955cda2	3b1d167e-5101-44d9-90f6-397133626e8f	nextflow run main.nf --outdir /mnt/spongemag_test -w /mnt/spongemag_test/work -resume
+2026-03-23 19:53:10	6.4s	cheesy_ampere	ERR	2dec1bc331ec079339c51deb2955cda2	3b1d167e-5101-44d9-90f6-397133626e8f	nextflow run main.nf --outdir /mnt/spongemag_test -w /mnt/spongemag_test/work -resume
+2026-03-23 19:57:40	20.4s	maniac_mcnulty	ERR	2dec1bc331ec079339c51deb2955cda2	3b1d167e-5101-44d9-90f6-397133626e8f	nextflow run main.nf --outdir /mnt/spongemag_test -w /mnt/spongemag_test/work -resume
+2026-03-23 20:05:23	19.7s	awesome_franklin	ERR	2dec1bc331ec079339c51deb2955cda2	3b1d167e-5101-44d9-90f6-397133626e8f	nextflow run main.nf --outdir /mnt/spongemag_test -w /mnt/spongemag_test/work -resume
+2026-03-23 20:14:46	19.9s	chaotic_visvesvaraya	ERR	2dec1bc331ec079339c51deb2955cda2	3b1d167e-5101-44d9-90f6-397133626e8f	nextflow run main.nf --outdir /mnt/spongemag_test -w /mnt/spongemag_test/work -resume
+2026-03-23 20:15:37	13m 16s	extravagant_cajal	ERR	2dec1bc331ec079339c51deb2955cda2	4d06246a-f529-4c30-add9-94cb4f31de0a	nextflow run main.nf
+2026-03-23 20:36:30	19.6s	romantic_wescoff	ERR	2dec1bc331ec079339c51deb2955cda2	4d06246a-f529-4c30-add9-94cb4f31de0a	nextflow run main.nf -resume
+2026-03-23 20:45:10	19.9s	serene_hirsch	ERR	2dec1bc331ec079339c51deb2955cda2	4d06246a-f529-4c30-add9-94cb4f31de0a	nextflow run main.nf -resume
+2026-03-23 21:02:12	19.4s	irreverent_goldwasser	ERR	2dec1bc331ec079339c51deb2955cda2	4d06246a-f529-4c30-add9-94cb4f31de0a	nextflow run main.nf -resume
+2026-03-23 21:52:22	13m 7s	elegant_ochoa	ERR	2dec1bc331ec079339c51deb2955cda2	d8e02931-deae-4e07-b404-0d46ec92e8e3	nextflow run main.nf
+2026-03-23 22:08:12	20.3s	intergalactic_hirsch	ERR	2dec1bc331ec079339c51deb2955cda2	d8e02931-deae-4e07-b404-0d46ec92e8e3	nextflow run main.nf -resume
+2026-03-24 20:13:23	13m 12s	jovial_davinci	ERR	2dec1bc331ec079339c51deb2955cda2	5d606d5c-d629-431c-ab5c-7912ea22f5f8	nextflow run main.nf
+2026-03-24 20:31:02	10m 25s	tender_almeida	ERR	0ee47144f490d63303ba5b4ecd4fc856	5d606d5c-d629-431c-ab5c-7912ea22f5f8	nextflow run main.nf -resume
+2026-03-24 21:03:27	6m 58s	chaotic_jones	ERR	2dec1bc331ec079339c51deb2955cda2	5d606d5c-d629-431c-ab5c-7912ea22f5f8	nextflow run main.nf -resume
+2026-03-24 21:12:58	26.6s	sharp_keller	OK	2dec1bc331ec079339c51deb2955cda2	5d606d5c-d629-431c-ab5c-7912ea22f5f8	nextflow run main.nf -resume
+2026-03-24 21:18:10	5.9s	lonely_noyce	ERR	2dec1bc331ec079339c51deb2955cda2	26c63677-8fb2-40f8-be58-ce673aa9dfdc	nextflow run main.nf --outdir /mnt/spongemag_test -w /mnt/spongemag_test/work
+2026-03-25 16:49:32	33m 7s	big_ptolemy	ERR	0102485c038915408a8360a53196b1d5	b82ecc6d-2b54-4922-bc23-8d3d004b97fd	nextflow run main.nf
+2026-03-25 18:59:47	10.7s	astonishing_lagrange	ERR	0102485c038915408a8360a53196b1d5	b82ecc6d-2b54-4922-bc23-8d3d004b97fd	nextflow run main.nf -resume
+2026-03-25 19:02:12	13.6s	nostalgic_varahamihira	ERR	0102485c038915408a8360a53196b1d5	b82ecc6d-2b54-4922-bc23-8d3d004b97fd	nextflow run main.nf -resume
+2026-03-25 19:03:06	14.1s	cheeky_plateau	ERR	0102485c038915408a8360a53196b1d5	b82ecc6d-2b54-4922-bc23-8d3d004b97fd	nextflow run main.nf -resume
+2026-03-25 19:04:41	34m 32s	boring_snyder	ERR	0102485c038915408a8360a53196b1d5	adb8ca52-5689-4664-9a0c-89bd29cb583e	nextflow run main.nf
+2026-03-25 19:41:07	12.3s	agitated_varahamihira	ERR	0102485c038915408a8360a53196b1d5	ffca0972-7822-4eef-99e4-70cbd3278a70	nextflow run main.nf --resume
+2026-03-25 19:41:45	10.2s	loving_raman	ERR	0102485c038915408a8360a53196b1d5	ffca0972-7822-4eef-99e4-70cbd3278a70	nextflow run main.nf -resume
+2026-03-25 19:42:13	32m 38s	high_payne	ERR	0102485c038915408a8360a53196b1d5	4ef528e9-0ebe-456b-b74e-4f386ac679a2	nextflow run main.nf
+2026-03-25 20:22:39	10.8s	adoring_leavitt	ERR	0102485c038915408a8360a53196b1d5	4ef528e9-0ebe-456b-b74e-4f386ac679a2	nextflow run main.nf -resume
+2026-03-25 20:27:06	32m 49s	high_keller	ERR	0102485c038915408a8360a53196b1d5	0871f421-c10e-41f4-8bad-dc454c39703d	nextflow run main.nf
+2026-03-25 21:12:29	10.5s	sleepy_kirch	ERR	0102485c038915408a8360a53196b1d5	0871f421-c10e-41f4-8bad-dc454c39703d	nextflow run main.nf -resume
+2026-03-25 21:13:05	35m 42s	kickass_miescher	ERR	0102485c038915408a8360a53196b1d5	0ec6bb50-e6b0-48bb-b1fb-cf95a99335d9	nextflow run main.nf
+2026-03-25 21:50:13	5m 46s	naughty_rubens	ERR	0102485c038915408a8360a53196b1d5	0ec6bb50-e6b0-48bb-b1fb-cf95a99335d9	nextflow run main.nf -resume
+2026-03-25 22:04:59	33m 46s	nauseous_salas	ERR	0102485c038915408a8360a53196b1d5	b795a1e5-3590-4c2a-841f-e9b9a260924d	nextflow run main.nf

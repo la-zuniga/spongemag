@@ -1,5 +1,5 @@
 process fastqc {
-    tag "FastQC on $sample_id"
+    tag "FASTQC: $sample_id"
     publishDir "${params.outdir}/${sample_id}/fastqc", mode: 'copy'
 
     container "${params.containers.fastqc}"

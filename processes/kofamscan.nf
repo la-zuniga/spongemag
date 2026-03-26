@@ -10,11 +10,12 @@ process KOfamscan {
 
     output:
     path("kofamscan_bins_annotation")
-    path("kofamscan_filtered.tsv")
+    path("${sample_id}_kofamscan_filtered.tsv")
 
     script:
 
     """
+    export TMPDIR=\$PWD
     mkdir kofamscan_bins_annotation
     mkdir -p tmp/tabular
     mkdir -p tmp/mapper
@@ -29,7 +30,7 @@ process KOfamscan {
                 --cpu 1 {}'
   filter_kofamscan.py \
     -i kofamscan_bins_annotation \
-    -o kofamscan_filtered.tsv \
+    -o ${sample_id}_kofamscan_filtered.tsv \
     --min_tier putative \
     --evalue_cutoff 1e-5 \
     --min_putative_score 50

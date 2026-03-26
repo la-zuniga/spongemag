@@ -1,6 +1,6 @@
 // processes/megahit.nf
 process megahit {
-    tag "megahit on $sample_id"
+    tag "MEGAHIT ASSEMBLYL: $sample_id"
     publishDir "${params.outdir}/${sample_id}/megahit", mode: 'copy'
 
     container "${params.containers.megahit}"

@@ -25,6 +25,6 @@ process checkm2 {
 
    sort_quality.py \
     -i checkm2_out/quality_report.tsv \
-    -o checkm2_out/sorted_quality_report.tsv 
+    -o checkm2_out/sorted_quality_report.tsv
     """
 }

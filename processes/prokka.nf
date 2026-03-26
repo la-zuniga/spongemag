@@ -1,5 +1,5 @@
 process prokka {
-    tag "PROKKA on $sample_id metagenomes"
+    tag "PROKKA: $sample_id metagenomes"
     publishDir "${params.outdir}/${sample_id}/prokka", mode: 'copy'
 
     container "${params.containers.prokka}"
@@ -16,6 +16,9 @@ process prokka {
     script:
 
     """
+    # parallel needs a writable tmpdir
+    export TMPDIR=\$PWD
+
     awk '{ print \$1 }' ${checkm2_out}/sorted_quality_report.tsv \
         | tail -n +2 > bin_list.txt
 
