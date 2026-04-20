@@ -16,8 +16,7 @@ process binning_prep {
     publishDir "${params.outdir}/${sample_id}/binning/prep", mode: 'copy'
 
     input:
-    tuple val(sample_id), path(sorted_bam), path(sorted_bai)
-    path(contigs)
+    tuple val(sample_id), path(sorted_bam), path(sorted_bai), path(contigs)
 
     output:
     tuple val(sample_id),
@@ -65,8 +64,7 @@ process binning_concoct {
     container "${params.containers.concoct}"
 
     input:
-    tuple val(sample_id), path(contigs_10K_1000), path(coverage_sorted)
-    path(contigs)
+    tuple val(sample_id), path(contigs_10K_1000), path(coverage_sorted), path(contigs)
 
     output:
     tuple val(sample_id), path("${sample_id}_concoct_contig_bin.tsv")
@@ -109,8 +107,7 @@ process binning_metabat {
     container "${params.containers.metabat}"
 
     input:
-    tuple val(sample_id), path(sorted_bam), path(sorted_bai)
-    path(contigs)
+    tuple val(sample_id), path(sorted_bam), path(sorted_bai), path(contigs)
 
     output:
     tuple val(sample_id), path("${sample_id}_metabat_contig_bin.tsv")
@@ -141,15 +138,68 @@ process binning_metabat {
 }
 
 
+// ── MetaBinner prep ──────────────────────────────────────────────────────────
+// Generates kmer profile and coverage table from the ORIGINAL assembly contigs
+// (not the 10kb cut-ups that CONCOCT uses). MetaBinner was designed for
+// original contigs — feeding it pre-fragmented contigs hurts its clustering.
+// Requires two containers (metabinner + metabat), so no container directive.
+process metabinner_prep {
+    tag "MetaBinner prep: $sample_id"
+    publishDir "${params.outdir}/${sample_id}/binning/metabinner_prep", mode: 'copy'
+
+    input:
+    tuple val(sample_id), path(sorted_bam), path(sorted_bai), path(contigs)
+
+    output:
+    tuple val(sample_id),
+          path("${sample_id}_contigs.fasta"),
+          path("${sample_id}_contigs_kmer_4_f1000.csv"),
+          path("${sample_id}_coverage_sorted.tsv")
+
+    script:
+    """
+    # Copy original contigs and normalize headers to ID-only
+    # (strip anything after first whitespace — MetaBinner's split_hhbins.py 
+    # expects the full header to match the contig ID in bin files)
+    awk '/^>/ {print \$1; next} {print}' ${contigs}/contigs.fasta \\
+        > ${sample_id}_contigs.fasta
+
+    # Generate kmer profile from normalized contigs
+    singularity exec ${params.containers.metabinner} \\
+        gen_kmer.py ${sample_id}_contigs.fasta 1000 4
+
+    # Generate per-contig coverage from BAM
+    singularity exec ${params.containers.metabat} \\
+        jgi_summarize_bam_contig_depths \\
+            --outputDepth ${sample_id}_jgi_depth.txt ${sorted_bam}
+
+    # Extract contig name + mean depth (columns 1 and 3, skip header)
+    awk -F'\\t' 'NR>1 {print \$1 "\\t" \$3}' ${sample_id}_jgi_depth.txt \\
+        > ${sample_id}_coverage.tsv
+
+    # Filter coverage to contigs present in kmer profile
+    sort_coverage.py \\
+        -c ${sample_id}_coverage.tsv \\
+        -k ${sample_id}_contigs_kmer_4_f1000.csv \\
+        -o ${sample_id}_coverage_sorted.tsv
+    """
+     
+    
+}
+
+
 // ── MetaBinner ────────────────────────────────────────────────────────────────
 process binning_metabinner {
     tag "MetaBinner: $sample_id"
     publishDir "${params.outdir}/${sample_id}/binning/metabinner", mode: 'copy'
 
     container "${params.containers.metabinner}"
+    // Bind-mount patched split_hhbins.py over the container's copy to fix a
+    // KeyError on the 2nd post-process pass (see bin/split_hhbins.py header).
+    containerOptions "--bind ${projectDir}/bin/split_hhbins.py:/opt/MetaBinner/scripts/split_hhbins.py"
 
     input:
-    tuple val(sample_id), path(contigs_10K), path(coverage_sorted), path(kmer_csv)
+    tuple val(sample_id), path(contigs), path(coverage_sorted), path(kmer_csv)
 
     output:
     tuple val(sample_id), path("${sample_id}_metabinner_contig_bin.tsv")
@@ -158,7 +208,7 @@ process binning_metabinner {
     script:
     """
     run_metabinner.sh \
-        -a ${contigs_10K} \
+        -a ${contigs} \
         -o metabinner_out \
         -d ${coverage_sorted} \
         -k ${kmer_csv} \
