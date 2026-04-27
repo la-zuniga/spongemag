@@ -12,6 +12,9 @@ Outputs one multi-FASTA per gene, ready for MAFFT alignment.
 
 Headers:  >{source}|{locus_tag}|{ko}|{tier}
   where source = bin name (for MAGs) or "unbinned" (for assembly contigs)
+
+When --sample_id is provided, headers become:
+  >{sample_id}|{source}|{locus_tag}|{ko}|{tier}
 """
 import argparse
 import os
@@ -117,11 +120,12 @@ def load_kofamscan_hits(tsv_path, ncycle_kos):
     return hits
 
 
-def extract_sequences(hits, faa_index, source_label, gene_seqs):
+def extract_sequences(hits, faa_index, source_label, gene_seqs, sample_id=None):
     """Look up amino acid sequences for KO hits and append to gene_seqs dict.
 
     source_label: used in FASTA header. For bins this is the bin name itself,
                   for assembly this is 'unbinned'.
+    sample_id: if provided, prepended to header for cross-sample identification.
     """
     missing = 0
     found = 0
@@ -142,7 +146,10 @@ def extract_sequences(hits, faa_index, source_label, gene_seqs):
         seq = faa_index[name][locus_tag]
         # For bins, label = bin name; for assembly, label = "unbinned"
         label = name if source_label == 'bins' else 'unbinned'
-        fasta_header = f">{label}|{locus_tag}|{ko}|{tier}"
+        if sample_id:
+            fasta_header = f">{sample_id}|{label}|{locus_tag}|{ko}|{tier}"
+        else:
+            fasta_header = f">{label}|{locus_tag}|{ko}|{tier}"
         gene_seqs[gene_name].append((fasta_header, seq))
         found += 1
 
@@ -164,6 +171,9 @@ def main():
                         help='Prokka assembly annotation directory')
     parser.add_argument('-o', '--outdir', required=True,
                         help='Output directory for per-gene FASTA files')
+    parser.add_argument('--sample_id',
+                        help='Sample ID to prepend to FASTA headers '
+                             '(for cross-sample identification)')
     parser.add_argument('--key_only', action='store_true',
                         help='Only output key marker genes: '
                              'narG, nirS, nirK, nosZ, nifH, norB, hao, amoA')
@@ -180,7 +190,8 @@ def main():
     if args.bins_tsv and args.bins_faa:
         hits = load_kofamscan_hits(args.bins_tsv, ncycle_kos)
         faa_index = load_faa_index(args.bins_faa)
-        found, missing = extract_sequences(hits, faa_index, 'bins', gene_seqs)
+        found, missing = extract_sequences(hits, faa_index, 'bins', gene_seqs,
+                                           sample_id=args.sample_id)
         print(f"Bins: {found} sequences extracted, {missing} not found "
               f"({len(faa_index)} bins loaded)")
 
@@ -188,7 +199,8 @@ def main():
     if args.assembly_tsv and args.assembly_faa:
         hits = load_kofamscan_hits(args.assembly_tsv, ncycle_kos)
         faa_index = load_faa_index(args.assembly_faa)
-        found, missing = extract_sequences(hits, faa_index, 'assembly', gene_seqs)
+        found, missing = extract_sequences(hits, faa_index, 'assembly', gene_seqs,
+                                           sample_id=args.sample_id)
         print(f"Assembly: {found} sequences extracted, {missing} not found")
 
     # ---- Write per-gene FASTA files ----
