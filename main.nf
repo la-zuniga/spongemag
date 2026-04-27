@@ -19,24 +19,26 @@ include { multiqc }     from './processes/multiqc.nf'
 include { megahit }     from './processes/megahit.nf'
 include { spades }      from './processes/spades.nf'
 include { align }       from './processes/align.nf'
-include { binning_prep; binning_concoct; binning_metabat; binning_metabinner } from './processes/binning.nf'
+include { binning_prep; binning_concoct; binning_metabat; metabinner_prep; binning_metabinner } from './processes/binning.nf'
 include { checkm2 }     from './processes/checkm2.nf'
-include { prokka }      from './processes/prokka.nf'
-include { KOfamscan }                        from './processes/kofamscan.nf'
-include { KOfamscan as KOfamscan_assembly }  from './processes/kofamscan.nf'
+include { bakta_assembly; bakta_bins } from './processes/bakta.nf'
+include { KOfamscan as KOfamscan_bins }     from './processes/kofamscan.nf'
+include { KOfamscan as KOfamscan_assembly } from './processes/kofamscan.nf'
 include { quast }       from './processes/quast.nf'
-include { dastool }  from './processes/dastool.nf'
-include { kegg_pathway } from './processes/kegg_pathway.nf'
-include { ncycle_phylo } from './processes/ncycle_phylo.nf'
-// include { gtdbtk }   from './processes/gtdbtk.nf'
-// I'm working on trying to immplement DAStool to get more robust consensus bins, but haven't worked it out yet, so it's commented out.
-// the gtdbtk-container I've built is quite large, but I know it works, so I comment it out when testing main.nf
+include { dastool }     from './processes/dastool.nf'
+include { kegg_pathway as kegg_pathway_bins }     from './processes/kegg_pathway.nf'
+include { kegg_pathway as kegg_pathway_assembly } from './processes/kegg_pathway.nf'
+include { ncycle_phylo_bins;
+          ncycle_phylo_assembly;
+          ncycle_phylo_cross_bins;
+          ncycle_phylo_cross_assembly } from './processes/ncycle_phylo.nf'
+
 // =============================
 // Input Channels
 // =============================
 Channel.fromFilePairs(params.reads).set { read_pairs_ch }
 
-    // =============================
+// =============================
 // Workflow Definition
 // =============================
 workflow {
@@ -46,7 +48,7 @@ workflow {
     fastQCoutput  = fastqc(fastpOutput[0])
     multiqcReport = multiqc(fastQCoutput[0])
 
-    // Step 2: Assembly
+    // Step 2: Assembly — emits [sample_id, contigs_dir]
     if (params.assembly == 'megahit') {
         assembly = megahit(fastpOutput[0])
     } else if (params.assembly == 'spades') {
@@ -56,121 +58,118 @@ workflow {
     }
 
     // Step 3a: Align reads to assembly (minimap2 | samtools — no SAM on disk)
-    alignOutput = align(fastpOutput[0], assembly)
+    alignOutput = align(fastpOutput[0].join(assembly))
 
     // Step 3b: Shared binning prep (cuts contigs, builds coverage + kmer profile)
-    prepOut = binning_prep(alignOutput, assembly)
+    prepOut = binning_prep(alignOutput.join(assembly))
 
     // Step 3c: Run three binners in parallel
-    //   prepOut tuple: [sample_id, contigs_10K_fa, contigs_10K_bed,
-    //                   contigs_10K_1000_fa, kmer_csv, coverage_table, coverage_sorted]
     concoctOut    = binning_concoct(
-        prepOut.map { sid, fa10K, bed, fa1000, kmer, cov, cov_sorted -> tuple(sid, fa1000, cov_sorted) },
-        assembly
+        prepOut.map { sid, fa10K, bed, fa1000, kmer, cov, cov_sorted -> tuple(sid, fa1000, cov_sorted) }
+            .join(assembly)
     )
-    metabatOut    = binning_metabat(alignOutput, assembly)
+    metabatOut    = binning_metabat(alignOutput.join(assembly))
+
+    mbPrepOut = metabinner_prep(alignOutput.join(assembly))
     metabinnerOut = binning_metabinner(
-        prepOut.map { sid, fa10K, bed, fa1000, kmer, cov, cov_sorted -> tuple(sid, fa10K, cov_sorted, kmer) }
+        mbPrepOut.map { sid, contigs, kmer, cov -> tuple(sid, contigs, cov, kmer) }
     )
 
-    // Step 3d: Join binner outputs by sample_id, then run DASTool consensus binning
-    // joined_bins: [sample_id, concoct_tsv, metabat_tsv, metabinner_tsv]
+    // Step 3d: DAS Tool consensus
     joined_bins = concoctOut[0].join(metabatOut[0]).join(metabinnerOut[0])
+    dastoolOutput = dastool(joined_bins.join(assembly))
+    // dastoolOutput[0] = sample_id val channel
+    // dastoolOutput[1] = DAStool_out dir
+    // dastoolOutput[2] = DASTool_bins dir
 
-    // dastoolOutput[0] = sample_id
-    // dastoolOutput[1] = DAStool_out (full output dir)
-    // dastoolOutput[2] = DASTool_bins (refined bins dir — fed downstream)
-    dastoolOutput  = dastool(joined_bins, assembly)
+    // Step 4a: CheckM2 (emits tier TSVs inside checkm2_out/)
+    checkm2Output = checkm2(dastoolOutput[0], dastoolOutput[2])
+    // checkm2Output[0] = sample_id val channel
+    // checkm2Output[1] = checkm2_out dir
 
-    // Step 4a: Quality Assessment on refined bins only
-    // checkm2Output[0] = sample_id
-    // checkm2Output[1] = checkm2_out
-    checkm2Output  = checkm2(dastoolOutput[0], dastoolOutput[2])
+    // ── Build keyed [sid, artifact] channels for joining ──────────────────
+    dastool_bins_keyed = dastoolOutput[0].merge(dastoolOutput[2])
+    checkm2_keyed      = checkm2Output[0].merge(checkm2Output[1])
 
-    // Step 4: Annotation of quality-filtered refined bins
-    // protein_annotation[0] = prokka_assembly_annotation
-    // protein_annotation[1] = prokka_bins_annotation
-    protein_annotation = prokka(
-        dastoolOutput[0],
-        assembly,
-        dastoolOutput[2],
-        checkm2Output[1]
+    // ── Tier fan-out for bin-path processes ───────────────────────────────
+    tier_ch = Channel.of('high', 'medium')
+
+    // [sid, dastool_bins, checkm2_out, tier] → [sid, tier, dastool_bins, checkm2_out]
+    bins_base = dastool_bins_keyed
+        .join(checkm2_keyed)
+        .combine(tier_ch)
+        .map { sid, db, co, tier -> tuple(sid, tier, db, co) }
+
+    // Step 4b: Full-assembly Bakta — runs once per sample, gated on dastool
+    assembly_for_bakta = dastoolOutput[0]
+        .map { sid -> [sid, sid] }
+        .join(assembly)
+        .map { sid, dummy, contigs -> tuple(sid, contigs) }
+    baktaAssemblyOut = bakta_assembly(assembly_for_bakta)
+    // baktaAssemblyOut: [sid, bakta_assembly_annotation]
+
+    // Step 4c: Per-tier bin Bakta
+    baktaBinsOut = bakta_bins(bins_base)
+    // baktaBinsOut: [sid, tier, bakta_bins_annotation]
+
+    // Step 4d: KOfamscan — bins (per tier) + assembly (once)
+    kofamBinsOut = KOfamscan_bins(
+        baktaBinsOut.map { sid, tier, faa -> tuple(sid, "bins_${tier}", faa) }
     )
-    kofam_annotation = KOfamscan(
-        dastoolOutput[0],
-        protein_annotation[1]
+    // kofamBinsOut: [sid, "bins_${tier}", annotation_dir, filtered_tsv]
+
+    kofamAssemblyOut = KOfamscan_assembly(
+        baktaAssemblyOut.map { sid, faa -> tuple(sid, 'assembly', faa) }
+    )
+    // kofamAssemblyOut: [sid, 'assembly', annotation_dir, filtered_tsv]
+
+    // Step 5: QUAST per tier
+    quast(bins_base)
+
+    // Step 6a: KEGG pathway — bins (per tier) + assembly (once)
+    kegg_pathway_bins(
+        kofamBinsOut.map { sid, label, ann, tsv -> tuple(sid, label, tsv) }
+    )
+    kegg_pathway_assembly(
+        kofamAssemblyOut.map { sid, label, ann, tsv -> tuple(sid, label, tsv) }
     )
 
-    // Step 4b: KOfamscan on full assembly (captures unbinned contigs too)
-    kofam_assembly = KOfamscan_assembly(
-        dastoolOutput[0],
-        protein_annotation[0]
-    )
+    // Step 6b: Per-sample N-cycle phylogenies — bins (per tier) + assembly (once)
+    // Join kofam filtered TSV with prokka annotation dir on (sid, tier) for bins
+    phylo_bins_in = kofamBinsOut
+        .map { sid, label, ann, tsv ->
+            def tier = label - 'bins_'
+            tuple(sid, tier, tsv)
+        }
+        .join(
+            baktaBinsOut.map { sid, tier, faa -> tuple(sid, tier, faa) },
+            by: [0, 1]
+        )
+        // [sid, tier, bins_tsv, bakta_bins_dir]
+    ncycleBinsOut = ncycle_phylo_bins(phylo_bins_in)
+    // ncycleBinsOut: [sid, tier, sequences_dir, alignments, trees]
 
-    // Step 5: Assembly QC on refined bins
-    quastReport = quast(dastoolOutput[0], dastoolOutput[2])
+    // Assembly phylo: join on sid
+    phylo_assembly_in = baktaAssemblyOut
+        .join(kofamAssemblyOut.map { sid, label, ann, tsv -> tuple(sid, tsv) })
+        .map { sid, faa, tsv -> tuple(sid, tsv, faa) }
+    ncycleAssemblyOut = ncycle_phylo_assembly(phylo_assembly_in)
+    // ncycleAssemblyOut: [sid, sequences_dir, alignments, trees]
 
-    kegg_results = kegg_pathway(
-    dastoolOutput[0],
-    kofam_annotation[1]    // kofamscan_filtered.tsv
-    )
+    // Step 6c: Cross-sample N-cycle phylogenies
+    // Bins: group sequences dirs by tier across all samples
+    cross_bins_in = ncycleBinsOut
+        .map { sid, tier, seqs, aln, trees -> tuple(tier, seqs) }
+        .groupTuple()
+    ncycle_phylo_cross_bins(cross_bins_in)
 
-    // Step 6: Nitrogen cycle gene phylogenies (bins + assembly)
-    ncycle_phylo(
-        dastoolOutput[0],
-        kofam_annotation[1],       // bins filtered TSV
-        kofam_assembly[1],         // assembly filtered TSV
-        protein_annotation[1],     // prokka_bins_annotation
-        protein_annotation[0]      // prokka_assembly_annotation
+    // Assembly: collect sequences dirs across all samples
+    ncycle_phylo_cross_assembly(
+        ncycleAssemblyOut
+            .map { sid, seqs, aln, trees -> seqs }
+            .collect()
     )
 
     // Optional
-    // gtdbtk_classification = gtdbtk(dastoolOutput[2])}
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // gtdbtk_classification = gtdbtk(dastoolOutput[2])
+}
