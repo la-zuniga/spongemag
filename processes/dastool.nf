@@ -5,8 +5,7 @@ process dastool {
     container "${params.containers.dastool}"
 
     input:
-    tuple val(sample_id), path(concoct_contig_bin), path(metabat_contig_bin), path(metabinner_contig_bin)
-    path(contigs)
+    tuple val(sample_id), path(concoct_contig_bin), path(metabat_contig_bin), path(metabinner_contig_bin), path(contigs)
 
     output:
     val(sample_id)

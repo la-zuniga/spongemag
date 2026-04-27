@@ -4,8 +4,7 @@ process align {
     publishDir "${params.outdir}/${sample_id}/align", mode: 'copy'
 
     input:
-    tuple val(sample_id), path(r1), path(r2)
-    path(contigs)
+    tuple val(sample_id), path(r1), path(r2), path(contigs)
 
     output:
     tuple val(sample_id), path("${sample_id}.sorted.bam"), path("${sample_id}.sorted.bai")

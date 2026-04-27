@@ -9,7 +9,7 @@ process spades {
     tuple val(sample_id), file(r1), file(r2)
 
     output:
-    file("${sample_id}_spades_assembly")
+    tuple val(sample_id), path("${sample_id}_spades_assembly")
 
     script:
     """
