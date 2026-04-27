@@ -1,36 +1,43 @@
+// processes/kofamscan.nf
+//
+// Generic KOfamscan process. `label` drives publishDir + output filenames so
+// the same module can run per bin tier (bins_hq, bins_mq) and on the full
+// assembly.
+
 process KOfamscan {
-    tag "KOfamscan on $sample_id metagenomes (translated)"
-    publishDir "${params.outdir}/${sample_id}/kofamscan", mode: 'copy'
+    tag "KOfamscan (${label}) on $sample_id"
+    publishDir "${params.outdir}/${sample_id}/kofamscan/${label}", mode: 'copy'
 
     container "${params.containers.kofamscan}"
 
     input:
-    val(sample_id)
-    path(prokka_bins_annotation) 
+    tuple val(sample_id), val(label), path(prokka_annotation)
 
     output:
-    path("kofamscan_bins_annotation")
-    path("${sample_id}_kofamscan_filtered.tsv")
+    tuple val(sample_id), val(label),
+          path("kofamscan_${label}_annotation"),
+          path("${sample_id}_${label}_kofamscan_filtered.tsv")
 
     script:
-
     """
     export TMPDIR=\$PWD
-    mkdir kofamscan_bins_annotation
+    mkdir kofamscan_${label}_annotation
     mkdir -p tmp/tabular
     mkdir -p tmp/mapper
     echo "Current working directory: \$(pwd)"
 
 
-    find ${prokka_bins_annotation}/ -type f -name "*.faa" \
+    find ${prokka_annotation}/ -type f -name "*.faa" \
         | parallel -j ${params.kofamscan_threads} \
-            'exec_annotation \
-                -o kofamscan_bins_annotation/{/.}.out \
+            'mkdir -p tmp/{/.} && \
+             exec_annotation \
+                -o kofamscan_${label}_annotation/{/.}.out \
                 -p /kofamscan/db/profiles/ncycle.hal \
+                --tmp-dir tmp/{/.} \
                 --cpu 1 {}'
   filter_kofamscan.py \
-    -i kofamscan_bins_annotation \
-    -o ${sample_id}_kofamscan_filtered.tsv \
+    -i kofamscan_${label}_annotation \
+    -o ${sample_id}_${label}_kofamscan_filtered.tsv \
     --min_tier putative \
     --evalue_cutoff 1e-5 \
     --min_putative_score 50

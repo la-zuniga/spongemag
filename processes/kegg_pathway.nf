@@ -1,25 +1,25 @@
 process kegg_pathway {
-    tag "KEGG pathway mapping on $sample_id"
-    publishDir "${params.outdir}/${sample_id}/kegg_pathways", mode: 'copy'
+    tag "KEGG pathway mapping (${label}) on $sample_id"
+    publishDir "${params.outdir}/${sample_id}/kegg_pathways/${label}", mode: 'copy'
 
     container "${params.containers.python}"   // reuse — just needs python + requests
 
     input:
-    val(sample_id)
-    path(kofamscan_filtered)
+    tuple val(sample_id), val(label), path(kofamscan_filtered)
 
     output:
-    path("kegg_pathway_completeness.tsv")
-    path("nitrogen_cycle_completeness.tsv")
+    tuple val(sample_id), val(label),
+          path("${label}_kegg_pathway_completeness.tsv"),
+          path("${label}_nitrogen_cycle_completeness.tsv")
 
     script:
     """
     map_kegg_api.py \
         -i ${kofamscan_filtered} \
-        -o kegg_pathway_completeness.tsv \
+        -o ${label}_kegg_pathway_completeness.tsv \
         --min_tier confirmed \
         --min_completeness 0.05 \
         --target_pathways map00910 map00920 map00630 \
-        --nitrogen_output nitrogen_cycle_completeness.tsv
+        --nitrogen_output ${label}_nitrogen_cycle_completeness.tsv
     """
 }
